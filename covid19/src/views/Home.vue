@@ -1,40 +1,40 @@
 <template>
   <div class="main" id="bollettino">
     <div class="head">
-      <div class="title">Coronavirus in {{ sicilia.regione }}</div>
-      <div class="data">Bollettino aggiornato in data: {{ sicilia.data }}</div>
+      <div class="title">Coronavirus in {{ getRegione.denominazione_getRegione }}</div>
+      <div class="data">Bollettino aggiornato in data: {{ convertData(getRegione.data) }}</div>
     </div>
     <b-container>
       <firstRow
-        :ricoverati = "sicilia.ricoveratiSintomi"
-        :terapia = "sicilia.terapiaIntensiva"
-        :ospedalizzati = "sicilia.totaleOspedalizzati"
-        :isolamento = "sicilia.isolamentoDomiciliare"
+        :ricoverati = "getRegione.ricoverati_con_sintomi"
+        :terapia = "getRegione.terapia_intensiva"
+        :ospedalizzati = "getRegione.totale_ospedalizzati"
+        :isolamento = "getRegione.isolamento_domiciliare"
       />
       <secondRow
-        :totalePositivi = "sicilia.totalePositivi"
-        :nuoviPositivi = "sicilia.nuoviPositivi"
-        :dimessi = "sicilia.dimessiGuariti"
-        :deceduti = "sicilia.deceduti"
-        :totaleCasi = "sicilia.totaleCasi"
-        :tamponi = "sicilia.tamponi"
+        :totalePositivi = "getRegione.totale_positivi"
+        :nuoviPositivi = "getRegione.nuovi_positivi"
+        :dimessi = "getRegione.dimessi_guariti"
+        :deceduti = "getRegione.deceduti"
+        :totaleCasi = "getRegione.totale_casi"
+        :tamponi = "getRegione.tamponi"
       />
       <province
-        :province = "provinceTotale"
+        :province = "getProvince"
       />
       <hr>
       <chart :casiTotali = "grafico.casiTotali" />
       <nazione
-        :ricoverati = "nazione.ricoveratiSintomi"
-        :terapia = "nazione.terapiaIntensiva"
-        :ospedalizzati = "nazione.totaleOspedalizzati"
-        :isolamento = "nazione.isolamentoDomiciliare"
-        :totalePositivi = "nazione.totalePositivi"
-        :nuoviPositivi = "nazione.nuoviPositivi"
-        :dimessi = "nazione.dimessiGuariti"
-        :deceduti = "nazione.deceduti"
-        :totaleCasi = "nazione.totaleCasi"
-        :tamponi = "nazione.tamponi"
+        :ricoverati = "getNazione.ricoverati_con_sintomi"
+        :terapia = "getNazione.terapia_intensiva"
+        :ospedalizzati = "getNazione.totale_ospedalizzati"
+        :isolamento = "getNazione.isolamento_domiciliare"
+        :totalePositivi = "getNazione.totale_positivi"
+        :nuoviPositivi = "getNazione.nuovi_positivi"
+        :dimessi = "getNazione.dimessi_guariti"
+        :deceduti = "getNazione.deceduti"
+        :totaleCasi = "getNazione.totale_casi"
+        :tamponi = "getNazione.tamponi"
       />
       <hr>
       <div class="vamedecumContainer" id="cosaFare">
@@ -67,6 +67,7 @@
 
 <script>
 import axios from 'axios';
+// import { mapState } from 'vuex';
 import firstRow from '@/components/firstRow.vue';
 import secondRow from '@/components/secondRow.vue';
 import province from '@/components/province.vue';
@@ -80,34 +81,6 @@ export default {
       grafico: {
         casiTotali: [],
       },
-      sicilia: {
-        regione: 'Sicilia',
-        data: '00-00-2020',
-        ricoveratiSintomi: '0',
-        terapiaIntensiva: '0',
-        totaleOspedalizzati: '0',
-        isolamentoDomiciliare: '0',
-        totalePositivi: '0',
-        nuoviPositivi: '0',
-        dimessiGuariti: '0',
-        deceduti: '0',
-        totaleCasi: '0',
-        tamponi: '0',
-      },
-      nazione: {
-        stato: 'Italia',
-        ricoveratiSintomi: '0',
-        terapiaIntensiva: '0',
-        totaleOspedalizzati: '0',
-        isolamentoDomiciliare: '0',
-        totalePositivi: '0',
-        nuoviPositivi: '0',
-        dimessiGuariti: '0',
-        deceduti: '0',
-        totaleCasi: '0',
-        tamponi: '0',
-      },
-      provinceTotale: [],
       regole: {
         1: '1. Quali sono i sintomi a cui devo fare attenzione? Febbre e sintomi simil-influenzali come tosse, mal di gola, respiro corto, dolore ai muscoli, stanchezza sono segnali di una possibile infezione da nuovo coronavirus.',
         2: '2. Ho febbre e/o sintomi influenzali, cosa devo fare? Resta in casa e chiama il medico di famiglia, il pediatra o la guardia medica.',
@@ -151,83 +124,6 @@ export default {
       const newDate = giorno[0].concat('-', array[1], '-', array[0]);
       return newDate;
     },
-    getRegione() {
-      const path = 'https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-regioni-latest.json';
-      axios.get(path)
-        .then((res) => {
-          const result = res.data;
-          const lunghezza = result.length;
-          let i = 0;
-          while (i < lunghezza) {
-            if (result[i].codice_regione === 19) {
-              const oldData = res.data[i].data;
-              const newDate = this.convertData(oldData);
-              this.sicilia.regione = res.data[i].denominazione_regione;
-              this.sicilia.data = newDate;
-              this.sicilia.ricoveratiSintomi = res.data[i].ricoverati_con_sintomi;
-              this.sicilia.terapiaIntensiva = res.data[i].terapia_intensiva;
-              this.sicilia.totaleOspedalizzati = res.data[i].totale_ospedalizzati;
-              this.sicilia.isolamentoDomiciliare = res.data[i].isolamento_domiciliare;
-              this.sicilia.totalePositivi = res.data[i].totale_positivi;
-              this.sicilia.nuoviPositivi = res.data[i].nuovi_positivi;
-              this.sicilia.dimessiGuariti = res.data[i].dimessi_guariti;
-              this.sicilia.deceduti = res.data[i].deceduti;
-              this.sicilia.totaleCasi = res.data[i].totale_casi;
-              this.sicilia.tamponi = res.data[i].tamponi;
-            }
-            i += 1;
-          }
-        })
-        .catch((error) => {
-          // eslint-disable-next-line
-          console.error(error);
-        });
-    },
-    getProvince() {
-      const path = 'https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-province-latest.json';
-      axios.get(path)
-        .then((res) => {
-          const result = res.data;
-          const lunghezza = result.length;
-          let i = 0;
-          while (i < lunghezza) {
-            if (result[i].codice_regione === 19) {
-              if (result[i].denominazione_provincia !== 'In fase di definizione/aggiornamento') {
-                this.provinceTotale.push(result[i]);
-                // console.log(this.provinceTotale);
-              }
-            }
-            i += 1;
-          }
-          // console.log(this.provinceTotale);
-        })
-        .catch((error) => {
-          // eslint-disable-next-line
-          console.error(error);
-        });
-    },
-    getNazione() {
-      const path = 'https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-andamento-nazionale-latest.json';
-      axios.get(path)
-        .then((res) => {
-          this.nazione.stato = res.data[0].stato;
-          this.nazione.ricoveratiSintomi = res.data[0].ricoverati_con_sintomi;
-          this.nazione.terapiaIntensiva = res.data[0].terapia_intensiva;
-          this.nazione.totaleOspedalizzati = res.data[0].totale_ospedalizzati;
-          this.nazione.isolamentoDomiciliare = res.data[0].isolamento_domiciliare;
-          this.nazione.totalePositivi = res.data[0].totale_positivi;
-          this.nazione.nuoviPositivi = res.data[0].nuovi_positivi;
-          this.nazione.dimessiGuariti = res.data[0].dimessi_guariti;
-          this.nazione.deceduti = res.data[0].deceduti;
-          this.nazione.totaleCasi = res.data[0].totale_casi;
-          this.nazione.tamponi = res.data[0].tamponi;
-          // console.log(this.nazione);
-        })
-        .catch((error) => {
-          // eslint-disable-next-line
-          console.error(error);
-        });
-    },
     getStorico() {
       const path = 'https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-regioni.json';
       axios.get(path)
@@ -248,7 +144,7 @@ export default {
             }
             i += 1;
           }
-          // console.log(this.grafico.casiTotali);
+          // (this.grafico.casiTotali);
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -257,10 +153,25 @@ export default {
     },
   },
   created() {
-    this.getRegione();
-    this.getProvince();
-    this.getNazione();
+    // this.getProvince();
+    // this.getNazione();
     this.getStorico();
+  },
+  mounted() {
+    this.$store.dispatch('getRegione');
+    this.$store.dispatch('getProvince');
+    this.$store.dispatch('getNazione');
+  },
+  computed: {
+    getRegione() {
+      return this.$store.getters.retRegione[0];
+    },
+    getProvince() {
+      return this.$store.getters.retProvince;
+    },
+    getNazione() {
+      return this.$store.getters.retNazione[0];
+    },
   },
 };
 </script>
