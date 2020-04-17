@@ -161,15 +161,9 @@ export default {
       }
       return undefined;
     },
-    setRegion() {
+    updateRegionData() {
       this.$store.dispatch('loadRegion', this.selected);
-      // eslint-disable-next-line
-      console.info('setRegion');
-    },
-    setProvince() {
       this.$store.dispatch('loadProvinces', this.selected);
-      // eslint-disable-next-line
-      console.info('setRegion');
     },
     getStorico() {
       const path = 'https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-regioni.json';
@@ -200,8 +194,7 @@ export default {
     },
     regionChange() {
       // Updates the region based on the selection
-      debounce(this.setRegion(), 2000);
-      debounce(this.setProvince(), 2000);
+      debounce(this.updateRegionData(), 2000);
     },
   },
   created() {
