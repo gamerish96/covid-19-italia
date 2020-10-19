@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/covid-19-italia/precache-manifest.7c8d54a381a74fa739c81356b314d058.js"
+  "/covid-19-italia/precache-manifest.b9b92e0e475903708f207a6780cdd013.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "covid19-italia"});
