@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-navbar toggleable="lg" type="dark" variant="dark" fixed="top">
-      <b-navbar-brand href="/">COVID-19 ITALIA</b-navbar-brand>
+      <b-navbar-brand href="/covid-19-italia/">COVID-19 ITALIA</b-navbar-brand>
 
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 

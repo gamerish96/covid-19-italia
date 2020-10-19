@@ -54,7 +54,17 @@
 
 export default {
   name: 'Home',
-  props: ['totalePositivi', 'nuoviPositivi', 'dimessi', 'deceduti', 'totaleCasi', 'tamponi', 'ricoverati', 'terapia', 'ospedalizzati', 'isolamento'],
+  props: [
+    'totalePositivi',
+    'nuoviPositivi',
+    'dimessi',
+    'deceduti',
+    'totaleCasi',
+    'tamponi',
+    'ricoverati',
+    'terapia',
+    'ospedalizzati',
+    'isolamento'],
   data() {
     return {
     };

@@ -28,11 +28,6 @@
       <province
         :provinces = "province"
       />
-      <hr>
-      <chart
-        :casiTotali = "grafico.casiTotali"
-        :regionName = "region.denominazione_regione"
-      />
       <nazione
         :ricoverati = "nation.ricoverati_con_sintomi"
         :terapia = "nation.terapia_intensiva"
@@ -60,28 +55,16 @@
         </div>
       </div>
       <hr>
-      <div class="rivolgersiContainer" id="contatti">
-        <div class="rivolgersi">A chi rivolgersi?</div>
-        <b-list-group>
-          <b-list-group-item v-for="contatto in contatti" v-bind:key="contatto.key">
-            {{ contatto.titolo }} , <b-link :href="contatto.link" target="blank">
-              {{ contatto.placeholder }}
-            </b-link>
-          </b-list-group-item>
-        </b-list-group>
-      </div>
+
     </b-container>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-// import { mapState } from 'vuex';
 import firstRow from '@/components/firstRow.vue';
 import secondRow from '@/components/secondRow.vue';
 import province from '@/components/province.vue';
 import nazione from '@/components/nazione.vue';
-import chart from '@/components/chart.vue';
 import debounce from 'lodash';
 
 export default {
@@ -112,9 +95,7 @@ export default {
         { value: 2, text: 'Valle d\'Aosta' },
         { value: 5, text: 'Veneto' },
       ],
-      grafico: {
-        casiTotali: [],
-      },
+
       regole: {
         1: '1. Quali sono i sintomi a cui devo fare attenzione? Febbre e sintomi simil-influenzali come tosse, mal di gola, respiro corto, dolore ai muscoli, stanchezza sono segnali di una possibile infezione da nuovo coronavirus.',
         2: '2. Ho febbre e/o sintomi influenzali, cosa devo fare? Resta in casa e chiama il medico di famiglia, il pediatra o la guardia medica.',
@@ -125,18 +106,7 @@ export default {
         7: '7. Dove posso fare il test? I test vengono eseguiti unicamente in laboratori del Servizio Sanitario Nazionale selezionati. Se il tuo medico ritiene che sia necessario un test ti fornirà indicazioni su come procedere.',
         8: '8. Dove trovo altre informazioni attendibili? Segui solo le indicazioni specifiche e aggiornate dei siti web ufficiali, delle autorità locali e della Protezione Civile.',
       },
-      contatti: [
-        {
-          titolo: 'Regione Sicilia',
-          link: 'http://pti.regione.sicilia.it/portal/page/portal/PIR_PORTALE/',
-          placeholder: 'Link al Sito Web',
-        },
-        {
-          titolo: 'Numero Verde Regione Sicilia',
-          link: 'tel:800 45 87 87',
-          placeholder: '800 45 87 87',
-        },
-      ],
+
     };
   },
   regione: [],
@@ -145,7 +115,6 @@ export default {
     secondRow,
     province,
     nazione,
-    chart,
   },
   methods: {
     convertData(oldData) {
@@ -165,40 +134,11 @@ export default {
       this.$store.dispatch('loadRegion', this.selected);
       this.$store.dispatch('loadProvinces', this.selected);
     },
-    getStorico() {
-      const path = 'https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-regioni.json';
-      axios.get(path)
-        .then((res) => {
-          const result = res.data;
-          const lunghezza = result.length;
-          let i = 0;
-          let j = 0;
-          while (i < lunghezza) {
-            if (result[i].codice_regione === this.$store.getters.retRegione[0].codice_regione) {
-              const [casiTotali, dimessiGuariti, deceduti, dataCasi] = [
-                result[i].totale_casi, result[i].dimessi_guariti, result[i].deceduti, j,
-              ];
-              this.grafico.casiTotali.push({
-                casiTotali, dimessiGuariti, deceduti, dataCasi,
-              });
-              j += 1;
-            }
-            i += 1;
-          }
-          // (this.grafico.casiTotali);
-        })
-        .catch((error) => {
-          // eslint-disable-next-line
-          console.error(error);
-        });
-    },
+
     regionChange() {
       // Updates the region based on the selection
       debounce(this.updateRegionData(), 2000);
     },
-  },
-  created() {
-    this.getStorico();
   },
   mounted() {
     this.$store.dispatch('loadRegion', this.selected);
